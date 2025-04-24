@@ -1,0 +1,64 @@
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+.DS_Store
+dist
+
+# Environnement
+.env
+.env.*
+!.env.template
+!.env.example
+!.env.test
+
+# Medusa
+.medusa
+medusa-db.sql
+build
+.cache
+
+# Build
+.next
+out
+storybook-static
+
+# Logs
+logs
+*.log
+
+# Tests
+coverage
+.nyc_output
+cypress/videos
+cypress/screenshots
+
+# IDEs
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.vs
+
+# Databases
+*.sqlite
+*.sqlite3
+
+# Docker
+postgres_data
+redis_data
+docker-volumes
+
+# Médias
+uploads
+public/uploads
