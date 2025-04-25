@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      dockerfile: docker/backend/Dockerfile.dev
+    command: npm run dev
+    volumes:
+      - ./boutique-lnvx:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      dockerfile: docker/frontend/Dockerfile.dev
+    command: npm run dev
+    volumes:
+      - ./boutique-lnvx-storefront:/app
+      - /app/node_modules

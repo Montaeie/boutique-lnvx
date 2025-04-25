@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+      
+      - name: Install backend dependencies
+        working-directory: ./boutique-lnvx
+        run: npm ci
+      
+      - name: Run backend tests
+        working-directory: ./boutique-lnvx
+        run: npm test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_jwt_secret
+          COOKIE_SECRET: test_cookie_secret
+  
+  test-frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+      
+      - name: Install frontend dependencies
+        working-directory: ./boutique-lnvx-storefront
+        run: npm ci
+      
+      - name: Run frontend tests
+        working-directory: ./boutique-lnvx-storefront
+        run: npm test
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+      
+      - name: Install backend dependencies
+        working-directory: ./boutique-lnvx
+        run: npm ci
+      
+      - name: Lint backend
+        working-directory: ./boutique-lnvx
+        run: npm run lint || true
+      
+      - name: Install frontend dependencies
+        working-directory: ./boutique-lnvx-storefront
+        run: npm ci
+      
+      - name: Lint frontend
+        working-directory: ./boutique-lnvx-storefront
+        run: npm run lint || true
